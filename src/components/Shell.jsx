@@ -66,10 +66,10 @@ export function Sidebar({ page, setPage }) {
           padding: '8px 10px', borderRadius: 7, background: 'rgba(255,255,255,0.04)',
         }}>
           <div style={{ width: 28, height: 28, borderRadius: '50%', background: `linear-gradient(135deg, ${FC.eco500}, ${FC.aqua})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FC.sans, fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-            JL
+            SL
           </div>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>Jonathan L.</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>Shekinah Lukwichi</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: FC.mono }}>Administrateur</div>
           </div>
         </div>
