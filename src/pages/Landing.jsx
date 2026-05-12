@@ -1,179 +1,442 @@
 import { FC } from '../theme.js';
-import HeroLive from '../components/HeroLive.jsx';
-import { KPICard } from '../components/Charts.jsx';
-import WorldMap from '../components/WorldMap.jsx';
-import { WaveDeco } from '../components/FCLogo.jsx';
 import FCLogo from '../components/FCLogo.jsx';
+import { WaveDeco } from '../components/FCLogo.jsx';
+import WorldMap from '../components/WorldMap.jsx';
 
 const HIGHLIGHTS = {
   MAR: { status: 'warning',  intensity: 0.7 },
-  SEN: { status: 'healthy',  intensity: 0.5 },
   MRT: { status: 'critical', intensity: 0.9 },
-  GHA: { status: 'healthy',  intensity: 0.6 },
-  CIV: { status: 'warning',  intensity: 0.4 },
+  SEN: { status: 'healthy',  intensity: 0.6 },
+  GHA: { status: 'healthy',  intensity: 0.5 },
+  COD: { status: 'warning',  intensity: 0.6 },
   MOZ: { status: 'healthy',  intensity: 0.7 },
   ZAF: { status: 'warning',  intensity: 0.5 },
+  CIV: { status: 'warning',  intensity: 0.4 },
 };
+
+const STATS = [
+  { val: '38',    label: 'espèces surveillées' },
+  { val: '94.2%', label: 'précision IA' },
+  { val: '20 ans',label: 'données FAO' },
+  { val: '12+',   label: 'bassins versants' },
+];
 
 const FEATURES = [
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12l3-4 4 3 4-7 4 3" stroke="#2E8F62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 12v7a1 1 0 01-1 1H4a1 1 0 01-1-1v-7" stroke="#2E8F62" strokeWidth="2" strokeLinecap="round"/></svg>,
-    title: 'Prévision par espèce',
-    desc: 'Modèles IA entraînés par espèce, zone FAO et saison. Horizon 30 à 90 jours avec intervalles de confiance.',
-    color: FC.eco500, bg: `${FC.eco500}10`,
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M3 12l3-4 4 3 4-7 4 4" stroke={FC.eco500} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M21 12v7a1 1 0 01-1 1H4a1 1 0 01-1-1v-7" stroke={FC.eco500} strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    ),
+    title: 'Prévisions ultra-précises',
+    desc: 'Des modèles IA entraînés sur des décennies de données pour prédire la biomasse par espèce, zone et saison avec un taux de précision supérieur à 94%.',
+    color: FC.eco500,
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#15355F" strokeWidth="2"/><path d="M2 12h3M19 12h3M12 2v3M12 19v3" stroke="#15355F" strokeWidth="2" strokeLinecap="round"/></svg>,
-    title: 'Carte de surveillance',
-    desc: 'Visualisez les alertes de surpêche, zones critiques et état des stocks sur une carte mondiale interactive.',
-    color: FC.navy600, bg: `${FC.navy600}10`,
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke={FC.aqua} strokeWidth="2"/>
+        <path d="M2 12h3M19 12h3M12 2v3M12 19v3" stroke={FC.aqua} strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="12" cy="12" r="2.5" fill={FC.aqua}/>
+      </svg>
+    ),
+    title: 'Surveillance mondiale',
+    desc: "De l'Atlantique au lac Tanganyika, couvrez simultanément les océans, fleuves et lacs avec une carte de surveillance en temps réel.",
+    color: FC.aqua,
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 4.8 5.3.8-3.9 3.8.9 5.3L12 14.3l-4.7 2.4.9-5.3L4.3 7.6l5.3-.8L12 2z" stroke="#D9942C" strokeWidth="2" strokeLinejoin="round"/></svg>,
-    title: 'Recommandations IA',
-    desc: 'Quotas suggérés, saisons de fermeture, zones de repos biologique — générés et priorisés automatiquement.',
-    color: FC.amber, bg: `${FC.amber}10`,
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2l2.4 4.8 5.3.8-3.85 3.75.91 5.27L12 14.27l-4.76 2.58.91-5.27L4.3 7.6l5.3-.8L12 2z" stroke={FC.amber} strokeWidth="1.8" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: 'Décisions intelligentes',
+    desc: 'Quotas optimaux, fermetures saisonnières et zones de repos générés automatiquement. Protégez les stocks tout en maximisant les rendements.',
+    color: FC.amber,
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 15V4M12 4L8.5 7.5M12 4l3.5 3.5" stroke="#1E4D80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" stroke="#1E4D80" strokeWidth="2" strokeLinecap="round"/></svg>,
-    title: 'Import de données',
-    desc: 'Chargez vos données de débarquement CSV/Excel. Détection automatique des colonnes et validation.',
-    color: FC.navy600, bg: `${FC.navy500}10`,
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" stroke={FC.navy600} strokeWidth="1.8"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5" stroke={FC.navy600} strokeWidth="1.8"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5" stroke={FC.navy600} strokeWidth="1.8"/>
+        <path d="M14 17.5h7M17.5 14v7" stroke={FC.navy600} strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    ),
+    title: 'Import universel',
+    desc: 'Compatible avec tous les formats de données : CSV, Excel, FAO FishStat, journaux de bord numériques. Normalisation automatique en secondes.',
+    color: FC.navy600,
   },
+  {
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke={FC.eco700} strokeWidth="1.8"/>
+        <path d="M7 12l3 3 7-7" stroke={FC.eco500} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: 'Conformité & traçabilité',
+    desc: 'Chaque décision est documentée, horodatée et exportable. Facilitez vos audits, rapports FAO et certifications de pêche durable.',
+    color: FC.eco700,
+  },
+  {
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke={FC.coral} strokeWidth="1.8" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: 'Alertes en temps réel',
+    desc: "Recevez instantanément les notifications de surexploitation, de migration atypique ou de dégradation des habitats avant qu'il ne soit trop tard.",
+    color: FC.coral,
+  },
+];
+
+const BENEFITS = [
+  { icon:'📈', title:'+28% de rendement moyen', desc:'Les pêcheries utilisant FishCast optimisent leurs sorties en mer grâce aux prévisions saisonnières.' },
+  { icon:'💰', title:'Réduction des coûts', desc:'Moins de sorties improductives, meilleure planification logistique, quota optimisé : les économies sont immédiates.' },
+  { icon:'🌊', title:'Stocks préservés', desc:'En évitant la surpêche grâce aux recommandations IA, les bassins versants se reconstituent naturellement.' },
+  { icon:'📋', title:'Conformité facilitée', desc:'Rapports FAO, audits MSC, certifications durables — tout est généré automatiquement depuis votre tableau de bord.' },
 ];
 
 const STEPS = [
-  { n: '01', title: 'Importez', desc: 'Glissez vos fichiers CSV ou Excel de débarquement.' },
-  { n: '02', title: 'Analysez', desc: 'Explorez les tendances, espèces et zones géographiques.' },
-  { n: '03', title: 'Prévoyez', desc: "L'IA calcule les stocks sur 30, 60 ou 90 jours." },
-  { n: '04', title: 'Agissez', desc: 'Recevez des recommandations de gestion concrètes.' },
+  { n:'01', title:'Importez',  desc:'Glissez vos fichiers CSV ou Excel. Détection automatique des colonnes en secondes.' },
+  { n:'02', title:'Analysez',  desc:'Explorez les tendances historiques, la répartition par espèce et les alertes actives.' },
+  { n:'03', title:'Prévoyez',  desc:"L'IA calcule les stocks futurs sur 30, 60 ou 90 jours avec intervalles de confiance." },
+  { n:'04', title:'Agissez',   desc:'Recevez des recommandations de gestion concrètes et exportez vos rapports.' },
 ];
+
+const WATER_BODIES = [
+  { name:'Atlantique (FAO 34)', icon:'🌊', species:'12 espèces', status:'warning',  detail:'Zone Sahara sous surveillance' },
+  { name:'Lac Tanganyika (RDC)', icon:'💧', species:'7 espèces',  status:'healthy',  detail:'Kapenta en bonne reconstitution' },
+  { name:'Fleuve Congo (RDC)',   icon:'🏞', species:'15 espèces', status:'warning',  detail:'Pool Malebo zone critique' },
+  { name:'Rivière Lualaba (RDC)',icon:'🌿', species:'9 espèces',  status:'healthy',  detail:'Nouveau réseau actif' },
+];
+
+const PS = {
+  healthy:{ color:FC.eco500, bg:`${FC.eco500}12`, border:`${FC.eco300}50`, label:'Sain' },
+  warning:{ color:FC.amber,  bg:`${FC.amber}12`,  border:`${FC.amber}40`,  label:'Vigilance' },
+};
 
 export default function Landing({ setPage }) {
   return (
-    <div style={{ background: FC.paper }}>
+    <div style={{ background:FC.paper, minHeight:'100vh' }}>
 
-      {/* Top nav */}
+      {/* ── Sticky nav ── */}
       <nav style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 40px', height: 60, background: 'rgba(250,247,239,0.95)',
-        borderBottom: `1px solid ${FC.rule}`, position: 'sticky', top: 0, zIndex: 50,
-        backdropFilter: 'blur(10px)',
+        position:'sticky', top:0, zIndex:50,
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'0 48px', height:64,
+        background:'rgba(250,247,239,0.96)', backdropFilter:'blur(12px)',
+        borderBottom:`1px solid ${FC.rule}`,
       }}>
         <FCLogo color={FC.navy900} size={22} />
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="fc-btn-ghost" onClick={() => setPage('upload')}
-            style={{ fontSize: 13, padding: '8px 18px' }}>
-            Importer des données
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <button className="fc-btn-ghost" onClick={() => setPage('signin')}
+            style={{ fontSize:13, padding:'8px 20px' }}>
+            Se connecter
           </button>
-          <button className="fc-btn-eco" onClick={() => setPage('forecast')}
-            style={{ fontSize: 13, padding: '8px 18px' }}>
-            Voir la prévision →
+          <button className="fc-btn-eco" onClick={() => setPage('signin')}
+            style={{ fontSize:13, padding:'8px 20px' }}>
+            Commencer ici →
           </button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px 60px' }}>
-
-        {/* Hero */}
-        <div style={{ margin: '24px 0 2px', borderRadius: 12, overflow: 'hidden' }}>
-          <HeroLive setPage={setPage} />
+      {/* ── Hero ── */}
+      <div style={{
+        background:`linear-gradient(160deg, ${FC.navy900} 0%, #0D2845 50%, #051825 100%)`,
+        padding:'88px 48px 72px', position:'relative', overflow:'hidden',
+      }}>
+        <div style={{ position:'absolute', inset:0, opacity:0.15, pointerEvents:'none' }}>
+          {[0,1,2,3].map(i=>(
+            <svg key={i} style={{ position:'absolute', top:`${10+i*18}%`, left:0, width:'130%' }}>
+              <path d={`M${-100+i*40} 0 Q 300 ${-60+i*28} 700 0 T 1400 0`}
+                stroke={i%2===0?FC.aqua:FC.eco300} strokeWidth="1.2" fill="none"
+                style={{ animation:`fc-wave-drift ${5+i*1.3}s linear infinite`, animationDelay:`${-i*1.8}s` }}/>
+            </svg>
+          ))}
+        </div>
+        <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
+          {Array.from({length:12},(_,i)=>(
+            <div key={i} style={{
+              position:'absolute', left:`${6+(i*8)%90}%`, bottom:'5%',
+              width:3+(i%4), height:3+(i%4), borderRadius:'50%', background:FC.eco300, opacity:0,
+              animation:`fc-float-up ${4+i%3}s ease-in infinite`, animationDelay:`${(i*0.6)%4}s`,
+            }}/>
+          ))}
         </div>
 
-        {/* KPI strip */}
-        <div className="fc-kpi-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 40 }}>
-          <KPICard label="Stocks surveillés" value="38" unit="espèces" delta="+6 cette année" trend="up" />
-          <KPICard label="Précision modèle" value="94.2" unit="%" delta="+2.1 pts" trend="up" />
-          <KPICard label="Zones critiques" value="7" unit="zones FAO" delta="+2 zones" trend="down" />
-          <KPICard label="Historique FAO" value="20" unit="ans de données" />
+        <div style={{ position:'relative', zIndex:1, maxWidth:1060, margin:'0 auto', display:'grid', gridTemplateColumns:'1fr 400px', gap:64, alignItems:'center' }}>
+          <div>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 14px',
+              background:'rgba(61,217,214,0.12)', border:`1px solid rgba(61,217,214,0.3)`,
+              borderRadius:999, marginBottom:24 }}>
+              <span className="fc-live-dot"/>
+              <span style={{ fontFamily:FC.mono, fontSize:10, color:FC.aqua, letterSpacing:'0.15em', textTransform:'uppercase' }}>
+                Prévision halieutique IA · Afrique & RDC
+              </span>
+            </div>
+            <h1 style={{
+              fontFamily:FC.serif, fontSize:'clamp(36px, 4.5vw, 58px)', fontWeight:700,
+              color:'#fff', lineHeight:1.1, letterSpacing:'-0.02em', margin:'0 0 22px',
+            }}>
+              Anticipez les stocks,<br/>
+              <span className="fc-shimmer-text">protégez les océans</span>
+            </h1>
+            <p style={{ fontSize:16, color:'rgba(255,255,255,0.55)', lineHeight:1.8, maxWidth:500, marginBottom:14 }}>
+              La première plateforme d'intelligence artificielle dédiée à la gestion durable
+              des ressources halieutiques en Afrique — des côtes atlantiques aux eaux intérieures de la RDC.
+            </p>
+            <p style={{ fontSize:14, color:'rgba(255,255,255,0.35)', lineHeight:1.7, maxWidth:480, marginBottom:36 }}>
+              Prévisions de biomasse · Recommandations de quota · Alertes de surpêche ·
+              Lac Tanganyika · Fleuve Congo · Zone FAO 34
+            </p>
+            <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
+              <button className="fc-btn-eco" onClick={()=>setPage('signin')}
+                style={{ fontSize:15, padding:'14px 32px' }}>
+                Commencer ici →
+              </button>
+              <button className="fc-btn-ghost" onClick={()=>setPage('signin')}
+                style={{ fontSize:15, padding:'14px 28px', color:'#fff', borderColor:'rgba(255,255,255,0.25)' }}>
+                Se connecter
+              </button>
+            </div>
+          </div>
+
+          {/* Preview card */}
+          <div className="fc-glow-aqua" style={{
+            background:'rgba(8,23,46,0.78)', borderRadius:14,
+            padding:'22px 24px', backdropFilter:'blur(18px)',
+          }}>
+            <div style={{ fontFamily:FC.mono, fontSize:9, color:FC.aqua, letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:14 }}>
+              Prévision en direct — 90 jours
+            </div>
+            <svg width="100%" height="90" viewBox="0 0 360 90" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="lg-h" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor={FC.navy500}/>
+                  <stop offset="100%" stopColor={FC.eco300}/>
+                </linearGradient>
+              </defs>
+              {[0.25,0.5,0.75,1].map(t=>(
+                <line key={t} x1="10" x2="350" y1={90-t*80} y2={90-t*80} stroke="rgba(255,255,255,0.06)" strokeDasharray="3 6"/>
+              ))}
+              <path d="M10 65 L65 55 L120 58 L175 48 L230 42" stroke="url(#lg-h)" strokeWidth="2.2" fill="none"
+                strokeDasharray="600" strokeDashoffset="600"
+                style={{ animation:'fc-draw-line 1.6s ease 0.4s forwards' }}/>
+              <path d="M230 42 L265 36 L300 30 L335 24 L350 20" stroke={FC.eco300} strokeWidth="2" strokeDasharray="5 4" fill="none"/>
+              <path d="M230 42 L265 40 L300 35 L335 28 L350 24 L350 16 L335 20 L300 25 L265 32 L230 38Z"
+                fill={FC.eco300} opacity="0.12"/>
+              <line x1="230" y1="12" x2="230" y2="82" stroke="rgba(61,217,214,0.3)" strokeDasharray="2 4" strokeWidth="0.8"/>
+            </svg>
+            <div style={{ marginTop:12, display:'flex', gap:14 }}>
+              {[['Historique',FC.navy500],['Prévision',FC.eco300]].map(([l,c])=>(
+                <div key={l} style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:FC.mono }}>
+                  <div style={{ width:14, height:2, background:c, borderRadius:1 }}/>{l}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop:18, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.07)', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
+              {[['2 847 t','Biomasse'],['94.2%','Précision'],['38','Espèces']].map(([v,l])=>(
+                <div key={l} style={{ textAlign:'center' }}>
+                  <div style={{ fontFamily:FC.serif, fontSize:20, fontWeight:700, color:'#fff' }}>{v}</div>
+                  <div style={{ fontSize:10, color:'rgba(255,255,255,0.28)', fontFamily:FC.mono, marginTop:2 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* How it works */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div className="fc-eyebrow" style={{ marginBottom: 8 }}>Comment ça marche</div>
-          <h2 style={{ fontFamily: FC.serif, fontSize: 26, fontWeight: 700, color: FC.ink, letterSpacing: '-0.02em', marginBottom: 6 }}>
-            De vos données aux décisions
+        {/* Stats strip */}
+        <div style={{ position:'relative', zIndex:1, maxWidth:1060, margin:'52px auto 0',
+          display:'grid', gridTemplateColumns:'repeat(4,1fr)',
+          borderTop:'1px solid rgba(255,255,255,0.08)', paddingTop:36 }}>
+          {STATS.map((s,i)=>(
+            <div key={s.label} style={{ textAlign:'center', borderRight:i<3?'1px solid rgba(255,255,255,0.07)':'none', padding:'0 28px' }}>
+              <div style={{ fontFamily:FC.serif, fontSize:30, fontWeight:700, color:FC.eco300, letterSpacing:'-0.02em' }}>{s.val}</div>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.32)', fontFamily:FC.mono, marginTop:5 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth:1060, margin:'0 auto', padding:'72px 48px' }}>
+
+        {/* ── Water bodies coverage ── */}
+        <div style={{ marginBottom:72 }}>
+          <div style={{ textAlign:'center', marginBottom:40 }}>
+            <div className="fc-eyebrow" style={{ marginBottom:10 }}>Couverture géographique</div>
+            <h2 style={{ fontFamily:FC.serif, fontSize:28, fontWeight:700, color:FC.ink, letterSpacing:'-0.02em', marginBottom:10 }}>
+              Océans, fleuves & lacs — tout est couvert
+            </h2>
+            <p style={{ fontSize:14, color:FC.ink50, maxWidth:520, margin:'0 auto', lineHeight:1.75 }}>
+              FishCast est la seule plateforme qui surveille simultanément les eaux marines
+              et les eaux intérieures africaines, y compris les bassins versants de la RDC.
+            </p>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+            {WATER_BODIES.map(w=>{
+              const ps=PS[w.status];
+              return (
+                <div key={w.name} className="fc-card" style={{ padding:'22px 20px' }}>
+                  <div style={{ fontSize:28, marginBottom:12 }}>{w.icon}</div>
+                  <div style={{ fontFamily:FC.serif, fontSize:15, fontWeight:700, color:FC.ink, marginBottom:4 }}>{w.name}</div>
+                  <div style={{ fontSize:12, color:FC.ink50, marginBottom:10, fontFamily:FC.mono, fontStyle:'italic' }}>{w.species}</div>
+                  <div style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'5px 10px', borderRadius:999,
+                    background:ps.bg, border:`1px solid ${ps.border}` }}>
+                    <span style={{ width:5, height:5, borderRadius:'50%', background:ps.color }}/>
+                    <span style={{ fontSize:11, color:ps.color, fontFamily:FC.mono }}>{ps.label} · {w.detail}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── How it works ── */}
+        <div style={{ textAlign:'center', marginBottom:48 }}>
+          <div className="fc-eyebrow" style={{ marginBottom:10 }}>Comment ça marche</div>
+          <h2 style={{ fontFamily:FC.serif, fontSize:28, fontWeight:700, color:FC.ink, letterSpacing:'-0.02em', marginBottom:10 }}>
+            De vos données aux décisions en 4 étapes
           </h2>
-          <WaveDeco style={{ display: 'block', margin: '0 auto' }} />
+          <WaveDeco color={FC.eco300} width={220} style={{ display:'block', margin:'0 auto' }}/>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, marginBottom: 56, position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 20, left: '12.5%', right: '12.5%', height: 1, background: FC.ruleSoft, zIndex: 0 }} />
-          {STEPS.map((s, i) => (
-            <div key={s.n} style={{ textAlign: 'center', padding: '0 20px', position: 'relative', zIndex: 1 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:0, marginBottom:72, position:'relative' }}>
+          <div style={{ position:'absolute', top:21, left:'12%', right:'12%', height:1, background:FC.ruleSoft }}/>
+          {STEPS.map((s,i)=>(
+            <div key={s.n} style={{ textAlign:'center', padding:'0 20px', position:'relative' }}>
               <div style={{
-                width: 40, height: 40, borderRadius: '50%',
-                background: i === 0 ? FC.navy800 : '#fff',
-                border: `2px solid ${i === 0 ? FC.navy800 : FC.rule}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: FC.mono, fontSize: 12, fontWeight: 700,
-                color: i === 0 ? '#fff' : FC.ink50,
-                margin: '0 auto 16px',
+                width:44, height:44, borderRadius:'50%', margin:'0 auto 18px',
+                background:i===0?FC.navy900:'#fff',
+                border:`2px solid ${i===0?FC.navy900:FC.rule}`,
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontFamily:FC.mono, fontSize:12, fontWeight:700,
+                color:i===0?'#fff':FC.ink30, position:'relative', zIndex:1,
               }}>{s.n}</div>
-              <div style={{ fontFamily: FC.serif, fontSize: 16, fontWeight: 600, color: FC.ink, marginBottom: 6 }}>{s.title}</div>
-              <div style={{ fontSize: 13, color: FC.ink50, lineHeight: 1.65 }}>{s.desc}</div>
+              <div style={{ fontFamily:FC.serif, fontSize:16, fontWeight:700, color:FC.ink, marginBottom:8 }}>{s.title}</div>
+              <div style={{ fontSize:13, color:FC.ink50, lineHeight:1.7 }}>{s.desc}</div>
             </div>
           ))}
         </div>
 
-        {/* Features */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 40 }}>
-          {FEATURES.map(f => (
-            <div key={f.title} className="fc-card" style={{ padding: '24px 26px', display: 'flex', gap: 18 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {f.icon}
-              </div>
-              <div>
-                <div style={{ fontFamily: FC.serif, fontSize: 16, fontWeight: 700, color: FC.ink, marginBottom: 6, letterSpacing: '-0.01em' }}>{f.title}</div>
-                <div style={{ fontSize: 13, color: FC.ink70, lineHeight: 1.7 }}>{f.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Map section */}
-        <div className="fc-card" style={{ padding: '28px 28px', marginBottom: 40 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-            <div>
-              <div className="fc-eyebrow" style={{ marginBottom: 6 }}>Surveillance en temps réel</div>
-              <h2 style={{ fontFamily: FC.serif, fontSize: 22, fontWeight: 700, color: FC.ink, letterSpacing: '-0.02em' }}>
-                État des stocks — Afrique
-              </h2>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <span className="fc-tag"><span className="dot" style={{ background: FC.coral }} />Critique</span>
-              <span className="fc-tag"><span className="dot" style={{ background: FC.amber }} />Vigilance</span>
-              <span className="fc-tag"><span className="dot" />Sain</span>
-            </div>
+        {/* ── Features 6-grid ── */}
+        <div style={{ marginBottom:72 }}>
+          <div style={{ textAlign:'center', marginBottom:40 }}>
+            <div className="fc-eyebrow" style={{ marginBottom:10 }}>Fonctionnalités</div>
+            <h2 style={{ fontFamily:FC.serif, fontSize:28, fontWeight:700, color:FC.ink, letterSpacing:'-0.02em' }}>
+              Tout ce dont vous avez besoin
+            </h2>
           </div>
-          <div style={{ overflowX: 'auto' }}>
-            <WorldMap highlights={HIGHLIGHTS} width={1100} height={340} />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
+            {FEATURES.map(f=>(
+              <div key={f.title} className="fc-card" style={{ padding:'26px 24px' }}>
+                <div style={{ width:48, height:48, borderRadius:12, background:`${f.color}12`,
+                  border:`1px solid ${f.color}25`, display:'flex', alignItems:'center',
+                  justifyContent:'center', marginBottom:16 }}>
+                  {f.icon}
+                </div>
+                <div style={{ fontFamily:FC.serif, fontSize:15, fontWeight:700, color:FC.ink, marginBottom:8, letterSpacing:'-0.01em' }}>{f.title}</div>
+                <div style={{ fontSize:13, color:FC.ink70, lineHeight:1.7 }}>{f.desc}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* CTA */}
+        {/* ── Benefits ── */}
         <div style={{
-          background: `linear-gradient(135deg, ${FC.navy900} 0%, #0D2540 60%, #051A30 100%)`,
-          borderRadius: 12, padding: '52px 48px', textAlign: 'center', position: 'relative', overflow: 'hidden',
+          background:`linear-gradient(135deg, #F0F8F4 0%, ${FC.paper} 60%, #F0F4FA 100%)`,
+          borderRadius:14, padding:'52px 48px', marginBottom:72,
+          border:`1px solid ${FC.eco100}`,
         }}>
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.1 }}>
-            <WaveDeco color={FC.aqua} width={1200} height={60} style={{ position: 'absolute', top: '30%' }} />
+          <div style={{ textAlign:'center', marginBottom:40 }}>
+            <div className="fc-eyebrow" style={{ marginBottom:10 }}>Résultats mesurés</div>
+            <h2 style={{ fontFamily:FC.serif, fontSize:28, fontWeight:700, color:FC.ink, letterSpacing:'-0.02em', marginBottom:10 }}>
+              Un retour sur investissement immédiat
+            </h2>
+            <p style={{ fontSize:14, color:FC.ink50, maxWidth:480, margin:'0 auto', lineHeight:1.75 }}>
+              Nos clients constatent des améliorations significatives dès les premières semaines d'utilisation.
+            </p>
           </div>
-          <div className="fc-eyebrow" style={{ color: FC.aqua, marginBottom: 12 }}>Commencer maintenant</div>
-          <h2 style={{ fontFamily: FC.serif, fontSize: 30, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', marginBottom: 12 }}>
-            Vos données de pêche,<br />transformées en prévisions
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15, marginBottom: 32, maxWidth: 440, margin: '0 auto 32px', lineHeight: 1.7 }}>
-            Importez vos relevés de débarquement et obtenez vos premières prévisions en quelques minutes.
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-            <button className="fc-btn-eco" onClick={() => setPage('upload')} style={{ fontSize: 14, padding: '13px 28px' }}>
-              Importer mes données →
-            </button>
-            <button className="fc-btn-ghost" onClick={() => setPage('forecast')}
-              style={{ fontSize: 14, padding: '13px 24px', color: '#fff', borderColor: 'rgba(255,255,255,0.25)' }}>
-              Voir une démo
-            </button>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:20 }}>
+            {BENEFITS.map(b=>(
+              <div key={b.title} style={{ textAlign:'center' }}>
+                <div style={{ fontSize:36, marginBottom:12 }}>{b.icon}</div>
+                <div style={{ fontFamily:FC.serif, fontSize:16, fontWeight:700, color:FC.ink, marginBottom:8 }}>{b.title}</div>
+                <div style={{ fontSize:13, color:FC.ink70, lineHeight:1.65 }}>{b.desc}</div>
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* ── Map ── */}
+        <div style={{ borderRadius:14, overflow:'hidden', border:`1px solid rgba(61,217,214,0.18)`, marginBottom:72, position:'relative',
+          boxShadow:`0 8px 40px rgba(8,23,46,0.12)` }}>
+          <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:2,
+            padding:'22px 28px', background:'linear-gradient(180deg,rgba(4,12,31,0.85) 0%,transparent 100%)',
+            display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <div>
+              <div style={{ fontFamily:FC.mono, fontSize:9, color:FC.aqua, letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:5 }}>
+                Surveillance en temps réel
+              </div>
+              <div style={{ fontFamily:FC.serif, fontSize:20, fontWeight:700, color:'#fff' }}>
+                État des stocks — Afrique & RDC
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:8 }}>
+              {[['Critique',FC.coral],['Vigilance',FC.amber],['Sain',FC.eco500]].map(([l,c])=>(
+                <span key={l} style={{ display:'flex', alignItems:'center', gap:5, padding:'5px 12px',
+                  background:'rgba(8,23,46,0.7)', border:`1px solid ${c}40`, borderRadius:999,
+                  fontSize:11, color:c, fontFamily:FC.mono, backdropFilter:'blur(8px)' }}>
+                  <span style={{ width:5, height:5, borderRadius:'50%', background:c }}/>{l}
+                </span>
+              ))}
+            </div>
+          </div>
+          <WorldMap highlights={HIGHLIGHTS} mode="constellation" width={1060} height={400} showLegend={false}/>
+        </div>
+
+        {/* ── CTA ── */}
+        <div style={{
+          background:`linear-gradient(135deg, ${FC.navy900} 0%, #0D2540 55%, #051825 100%)`,
+          borderRadius:14, padding:'64px 52px', textAlign:'center', position:'relative', overflow:'hidden',
+        }}>
+          <div style={{ position:'absolute', inset:0, opacity:0.07, pointerEvents:'none' }}>
+            {[0,1].map(i=>(
+              <svg key={i} style={{ position:'absolute', bottom:`${10+i*20}%`, left:0, width:'100%' }}>
+                <path d={`M0 ${30+i*15} Q 250 ${i*20} 500 ${30+i*15} T 1100 ${30+i*15}`}
+                  stroke={i===0?FC.aqua:FC.eco300} strokeWidth="1" fill="none"/>
+              </svg>
+            ))}
+          </div>
+          <div style={{ position:'relative', zIndex:1 }}>
+            <div className="fc-eyebrow" style={{ color:FC.aqua, marginBottom:14 }}>Rejoignez FishCast</div>
+            <h2 style={{ fontFamily:FC.serif, fontSize:34, fontWeight:700, color:'#fff', letterSpacing:'-0.02em', marginBottom:16 }}>
+              Prêt à révolutionner<br/>votre gestion halieutique ?
+            </h2>
+            <p style={{ color:'rgba(255,255,255,0.4)', fontSize:15, lineHeight:1.8, maxWidth:500, margin:'0 auto 40px' }}>
+              Des ministères de la pêche aux coopératives locales, FishCast s'adapte à votre échelle.
+              Commencez gratuitement, sans installation, depuis votre navigateur.
+            </p>
+            <div style={{ display:'flex', gap:14, justifyContent:'center' }}>
+              <button className="fc-btn-eco" onClick={()=>setPage('signin')}
+                style={{ fontSize:15, padding:'15px 36px' }}>
+                Commencer ici →
+              </button>
+              <button className="fc-btn-ghost" onClick={()=>setPage('signin')}
+                style={{ fontSize:15, padding:'15px 28px', color:'#fff', borderColor:'rgba(255,255,255,0.2)' }}>
+                Se connecter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop:`1px solid ${FC.rule}`, padding:'28px 48px',
+        display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <FCLogo color={FC.ink50} size={18}/>
+        <div style={{ fontFamily:FC.mono, fontSize:11, color:FC.ink30 }}>
+          © 2025 FishCast · Données FAO / COPEMED / INRH · Tous droits réservés
         </div>
       </div>
     </div>

@@ -1,26 +1,25 @@
 import { useState } from 'react';
-import Landing from './pages/Landing.jsx';
-import SignIn from './pages/SignIn.jsx';
-import Upload from './pages/Upload.jsx';
-import Analysis from './pages/Analysis.jsx';
-import Forecast from './pages/Forecast.jsx';
-import Recommend from './pages/Recommend.jsx';
+import Landing    from './pages/Landing.jsx';
+import SignIn     from './pages/SignIn.jsx';
+import Dashboard  from './pages/Dashboard.jsx';
+import Upload     from './pages/Upload.jsx';
+import Analysis   from './pages/Analysis.jsx';
+import Forecast   from './pages/Forecast.jsx';
+import Recommend  from './pages/Recommend.jsx';
 
 export default function App() {
-  const [page, setPage] = useState('signin');
+  const [page, setPage] = useState('landing');
 
-  if (page === 'signin') return <SignIn setPage={setPage} />;
+  const props = { page, setPage };
 
-  if (page === 'landing') return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-      <Landing setPage={setPage} />
-    </div>
-  );
-
-  if (page === 'upload')   return <Upload   page={page} setPage={setPage} />;
-  if (page === 'analysis') return <Analysis page={page} setPage={setPage} />;
-  if (page === 'forecast') return <Forecast page={page} setPage={setPage} />;
-  if (page === 'recommend') return <Recommend page={page} setPage={setPage} />;
-
-  return null;
+  switch (page) {
+    case 'landing':   return <Landing   setPage={setPage} />;
+    case 'signin':    return <SignIn     setPage={setPage} />;
+    case 'dashboard': return <Dashboard  {...props} />;
+    case 'upload':    return <Upload     {...props} />;
+    case 'analysis':  return <Analysis   {...props} />;
+    case 'forecast':  return <Forecast   {...props} />;
+    case 'recommend': return <Recommend  {...props} />;
+    default:          return <Landing   setPage={setPage} />;
+  }
 }
