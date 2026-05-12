@@ -3,6 +3,7 @@ import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
 import { KPICard, BarList, LineChart } from '../components/Charts.jsx';
 import WorldMap from '../components/WorldMap.jsx';
+import useBreakpoint from '../hooks/useBreakpoint.js';
 
 const HIGHLIGHTS = {
   MAR: { status: 'warning',  intensity: 0.7 },
@@ -112,6 +113,7 @@ const DATA_BY_SOURCE = {
 };
 
 export default function Analysis({ page, setPage }) {
+  const { isMobile, isSmall } = useBreakpoint();
   const [source, setSource] = useState('marine');
   const d = DATA_BY_SOURCE[source];
 
@@ -144,7 +146,7 @@ export default function Analysis({ page, setPage }) {
         </div>
 
         {/* KPIs */}
-        <div className="fc-kpi-grid" style={{ gridTemplateColumns:'repeat(4,1fr)', marginBottom:24 }}>
+        <div className="fc-kpi-grid" style={{ gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', marginBottom:24 }}>
           {d.kpis.map(k => (
             <div key={k.label} style={{ padding:'18px 20px' }}>
               <div className="fc-eyebrow" style={{ marginBottom:8 }}>{k.label}</div>
@@ -161,7 +163,7 @@ export default function Analysis({ page, setPage }) {
         </div>
 
         {/* Charts row */}
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:20, marginBottom:24 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isSmall ? '1fr' : '2fr 1fr', gap:20, marginBottom:24 }}>
           <div className="fc-card" style={{ padding:'22px 24px' }}>
             <div className="fc-eyebrow" style={{ marginBottom:4 }}>Tendance historique</div>
             <div style={{ fontFamily:FC.serif, fontSize:17, fontWeight:700, color:FC.ink, marginBottom:18, letterSpacing:'-0.02em' }}>
@@ -179,7 +181,7 @@ export default function Analysis({ page, setPage }) {
         </div>
 
         {/* Monthly + Alerts */}
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:20, marginBottom:24 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isSmall ? '1fr' : '2fr 1fr', gap:20, marginBottom:24 }}>
           <div className="fc-card" style={{ padding:'22px 24px' }}>
             <div className="fc-eyebrow" style={{ marginBottom:4 }}>Saisonnalité</div>
             <div style={{ fontFamily:FC.serif, fontSize:17, fontWeight:700, color:FC.ink, marginBottom:18, letterSpacing:'-0.02em' }}>

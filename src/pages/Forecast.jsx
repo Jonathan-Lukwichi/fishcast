@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useBreakpoint from '../hooks/useBreakpoint.js';
 import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
 import { LineChart, KPICard } from '../components/Charts.jsx';
@@ -103,6 +104,7 @@ function SelectField({ label, value, onChange, options }) {
 }
 
 export default function Forecast({ page, setPage }) {
+  const { isMobile, isSmall } = useBreakpoint();
   const [src, setSrc] = useState('marine');
   const [species, setSpecies] = useState(SPECIES_BY_SOURCE.marine[0]);
   const [zone, setZone] = useState(ZONES_BY_SOURCE.marine[0]);
@@ -173,7 +175,7 @@ export default function Forecast({ page, setPage }) {
         {/* Config */}
         <div className="fc-card" style={{ padding: '22px 24px', marginBottom: 24 }}>
           <div className="fc-eyebrow" style={{ marginBottom: 16 }}>Paramètres de prévision</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 16, alignItems: 'end' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr auto', gap: 16, alignItems: 'end' }}>
             <SelectField label="Espèce" value={species} onChange={setSpecies} options={SPECIES_BY_SOURCE[src]} />
             <SelectField label="Zone" value={zone} onChange={setZone} options={ZONES_BY_SOURCE[src]} />
             <div>
@@ -331,7 +333,7 @@ export default function Forecast({ page, setPage }) {
             </div>
 
             {/* Table + Map */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isSmall ? '1fr' : '1fr 1fr', gap: 24 }}>
               <div className="fc-card" style={{ padding: '22px 24px' }}>
                 <div className="fc-eyebrow" style={{ marginBottom: 4 }}>Détail périodique</div>
                 <div style={{ fontFamily: FC.serif, fontSize: 16, fontWeight: 700, color: FC.ink, marginBottom: 16, letterSpacing: '-0.02em' }}>

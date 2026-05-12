@@ -3,6 +3,7 @@ import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
 import { LineChart } from '../components/Charts.jsx';
 import WorldMap from '../components/WorldMap.jsx';
+import useBreakpoint from '../hooks/useBreakpoint.js';
 
 const HIGHLIGHTS = {
   MAR: { status: 'warning',  intensity: 0.7 },
@@ -56,6 +57,7 @@ function StatPill({ val, label, color }) {
 }
 
 export default function Dashboard({ page, setPage }) {
+  const { isMobile, isSmall } = useBreakpoint();
   const now = useNow();
   const dateStr = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
@@ -98,7 +100,7 @@ export default function Dashboard({ page, setPage }) {
         </div>
 
         {/* ── KPI strip ── */}
-        <div className="fc-kpi-grid" style={{ gridTemplateColumns:'repeat(4,1fr)', marginBottom:24 }}>
+        <div className="fc-kpi-grid" style={{ gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', marginBottom:24 }}>
           {[
             { label:'Biomasse estimée',   value:'2 847', unit:'tonnes',    delta:'+12.4%', trend:'up'   },
             { label:'Précision modèle',   value:'94.2',  unit:'%',         delta:'+2.1 pts',trend:'up'  },
@@ -120,7 +122,7 @@ export default function Dashboard({ page, setPage }) {
         </div>
 
         {/* ── Main 2-col ── */}
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:20, marginBottom:24 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isSmall ? '1fr' : '2fr 1fr', gap:20, marginBottom:24 }}>
 
           {/* Forecast chart */}
           <div className="fc-card" style={{ padding:'22px 24px' }}>
@@ -187,7 +189,7 @@ export default function Dashboard({ page, setPage }) {
         </div>
 
         {/* ── Species progress ── */}
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:24 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isSmall ? '1fr' : '1fr 1fr', gap:20, marginBottom:24 }}>
           <div className="fc-card" style={{ padding:'22px 24px' }}>
             <div className="fc-eyebrow" style={{ marginBottom:4 }}>Stock par espèce</div>
             <div style={{ fontFamily:FC.serif, fontSize:17, fontWeight:700, color:FC.ink, marginBottom:18, letterSpacing:'-0.02em' }}>
@@ -277,7 +279,7 @@ export default function Dashboard({ page, setPage }) {
         </div>
 
         {/* ── Quick actions ── */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16, marginTop:24 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:16, marginTop:24 }}>
           {[
             { id:'upload',    icon:'↑', title:'Importer',       desc:'Charger vos données CSV / Excel',    color:FC.navy600, bg:`${FC.navy600}12` },
             { id:'analysis',  icon:'~', title:'Analyser',       desc:'Explorer stocks et tendances',       color:FC.eco500,  bg:`${FC.eco500}10` },

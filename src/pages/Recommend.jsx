@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
 import WorldMap from '../components/WorldMap.jsx';
+import useBreakpoint from '../hooks/useBreakpoint.js';
 
 const RECS = [
   {
@@ -145,6 +146,7 @@ function exportToPDF(rec) {
 }
 
 export default function Recommend({ page, setPage }) {
+  const { isMobile } = useBreakpoint();
   const [selected, setSelected]   = useState('R01');
   const [filter, setFilter]       = useState('all');
   const [approved, setApproved]   = useState(new Set());
@@ -183,7 +185,7 @@ export default function Recommend({ page, setPage }) {
       <div style={{ maxWidth: 1060, margin: '0 auto' }} className="fc-animate-in">
 
         {/* Summary strip */}
-        <div className="fc-kpi-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
+        <div className="fc-kpi-grid" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', marginBottom: 24 }}>
           {[
             { label: 'Actions critiques', val: counts.critical, color: FC.coral },
             { label: 'En vigilance',      val: counts.warning,  color: FC.amber },
@@ -201,7 +203,7 @@ export default function Recommend({ page, setPage }) {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: 24 }}>
 
           {/* Left: list */}
           <div>

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
+import useBreakpoint from '../hooks/useBreakpoint.js';
 
 const STEPS = ['Sélection', 'Aperçu', 'Traitement', 'Terminé'];
 
@@ -95,6 +96,7 @@ function DropZone({ onFile }) {
 }
 
 export default function Upload({ page, setPage }) {
+  const { isMobile } = useBreakpoint();
   const [file, setFile] = useState(null);
   const [step, setStep] = useState(0);
 
@@ -117,7 +119,7 @@ export default function Upload({ page, setPage }) {
           <div className="fc-animate-in">
             <DropZone onFile={handleFile} />
 
-            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 20 }}>
               <div className="fc-card-flat" style={{ padding: '20px 22px' }}>
                 <div className="fc-eyebrow" style={{ marginBottom: 12 }}>Colonnes requises</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
