@@ -1,0 +1,17 @@
+export const FC = {
+  navy900: '#08172E', navy800: '#0E2545', navy700: '#15355F',
+  navy600: '#1E4D80', navy500: '#2B6CA6',
+  ocean: '#1A6FA5', oceanLight: '#5FA8D3',
+  eco900: '#0F3D2C', eco700: '#1F6B49', eco500: '#2E8F62',
+  eco300: '#6FBC93', eco100: '#D5EBDD',
+  paper: '#FAF7EF', paperWarm: '#F4EFE2', paperDeep: '#E9E2CE',
+  white: '#FFFFFF', off: '#F7F9FC',
+  rule: '#D9D2BD', ruleSoft: '#E6E0CE',
+  ink: '#08172E', ink70: '#3A4A66', ink50: '#6B788C', ink30: '#A0A9B8',
+  coral: '#C2453A', amber: '#D9942C', emerald: '#2E8F62', sand: '#C9A55B',
+  serif: '"Source Serif 4", Georgia, serif',
+  sans: '"IBM Plex Sans", system-ui, sans-serif',
+  mono: '"IBM Plex Mono", ui-monospace, monospace',
+  tech: '"Space Grotesk", "IBM Plex Sans", system-ui, sans-serif',
+  aqua: '#3DD9D6', aquaGlow: '#6CF2EE', neon: '#7CFAB5', deepBlue: '#040C1F',
+};
