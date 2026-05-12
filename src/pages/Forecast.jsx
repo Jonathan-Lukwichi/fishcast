@@ -3,7 +3,7 @@ import useBreakpoint from '../hooks/useBreakpoint.js';
 import { useForecast } from '../context/ForecastContext.jsx';
 import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
-import { LineChart, KPICard } from '../components/Charts.jsx';
+import { LineChart } from '../components/Charts.jsx';
 import WorldMap from '../components/WorldMap.jsx';
 
 // Today = May 2026
@@ -106,12 +106,13 @@ function SelectField({ label, value, onChange, options }) {
 
 export default function Forecast({ page, setPage }) {
   const { isMobile, isSmall } = useBreakpoint();
-  const { setLastForecast } = useForecast();
+  const ctx = useForecast();
+  const setLastForecast = ctx?.setLastForecast ?? (() => {});
   const [src, setSrc] = useState('marine');
   const [species, setSpecies] = useState(SPECIES_BY_SOURCE.marine[0]);
   const [zone, setZone] = useState(ZONES_BY_SOURCE.marine[0]);
   const [horizon, setHorizon] = useState(12);
-  const [ran, setRan] = useState(true);
+  const [ran, setRan] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSource = s => {

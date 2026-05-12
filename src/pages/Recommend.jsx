@@ -194,7 +194,7 @@ function exportToPDF(rec) {
 
 export default function Recommend({ page, setPage }) {
   const { isMobile } = useBreakpoint();
-  const { lastForecast } = useForecast();
+  const { lastForecast } = useForecast() ?? {};
 
   const [selected, setSelected]   = useState(null);
   const [filter, setFilter]       = useState('all');

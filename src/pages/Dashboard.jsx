@@ -66,7 +66,7 @@ export default function Dashboard({ page, setPage }) {
   const { isMobile, isSmall } = useBreakpoint();
   const now = useNow();
   const dateStr = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  const { lastForecast: fc } = useForecast();
+  const { lastForecast: fc } = useForecast() ?? {};
 
   const mapHighlights = fc?.mapHighlights ?? DEFAULT_HIGHLIGHTS;
 
