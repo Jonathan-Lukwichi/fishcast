@@ -4,8 +4,9 @@ import Shell from '../components/Shell.jsx';
 import { LineChart } from '../components/Charts.jsx';
 import WorldMap from '../components/WorldMap.jsx';
 import useBreakpoint from '../hooks/useBreakpoint.js';
+import { useForecast } from '../context/ForecastContext.jsx';
 
-const HIGHLIGHTS = {
+const DEFAULT_HIGHLIGHTS = {
   MAR: { status: 'warning',  intensity: 0.7 },
   MRT: { status: 'critical', intensity: 0.95 },
   SEN: { status: 'healthy',  intensity: 0.6 },
@@ -56,10 +57,31 @@ function StatPill({ val, label, color }) {
   );
 }
 
+function fmtNum(n) {
+  if (n == null) return '—';
+  return Math.round(n).toLocaleString('fr-FR');
+}
+
 export default function Dashboard({ page, setPage }) {
   const { isMobile, isSmall } = useBreakpoint();
   const now = useNow();
   const dateStr = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const { lastForecast: fc } = useForecast();
+
+  const mapHighlights = fc?.mapHighlights ?? DEFAULT_HIGHLIGHTS;
+
+  const kpis = fc ? [
+    { label:'Prévision prochaine période', value: fmtNum(fc.nextMonthVal), unit:'tonnes',
+      delta: `${fc.nextMonthPct} vs actuel`, trend: parseFloat(fc.nextMonthPct) >= 0 ? 'up' : 'down' },
+    { label:'Précision modèle',   value:'94.2',  unit:'%',       delta:'+2.1 pts',    trend:'up'   },
+    { label:'Espèce analysée',    value:'1',     unit:'espèce',  delta: fc.species,   trend:'none' },
+    { label:'Prévisions actives', value:'1',     unit:'prévision', delta: fc.sourceLabel, trend:'none' },
+  ] : [
+    { label:'Biomasse estimée',    value:'2 847', unit:'tonnes',  delta:'+12.4%',      trend:'up'   },
+    { label:'Précision modèle',    value:'94.2',  unit:'%',       delta:'+2.1 pts',    trend:'up'   },
+    { label:'Espèces surveillées', value:'38',    unit:'espèces', delta:'+6 actives',  trend:'up'   },
+    { label:'Alertes actives',     value:'4',     unit:'alertes', delta:'+1 critique', trend:'down' },
+  ];
 
   return (
     <Shell page={page} setPage={setPage} title="Tableau de bord" sub={`${dateStr} · Zone FAO 34`}>
@@ -99,14 +121,57 @@ export default function Dashboard({ page, setPage }) {
           </div>
         </div>
 
+        {/* ── Last forecast banner (only when a forecast was run) ── */}
+        {fc && (
+          <div style={{
+            background:`linear-gradient(135deg, ${FC.eco500}18 0%, ${FC.aqua}12 100%)`,
+            border:`1px solid ${FC.eco500}35`, borderRadius:10, padding:'16px 20px',
+            marginBottom:20, display:'flex', alignItems:'center', justifyContent:'space-between',
+            flexWrap:'wrap', gap:12,
+          }}>
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <div style={{ width:36, height:36, borderRadius:8, background:`${FC.eco500}20`,
+                display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>◷</div>
+              <div>
+                <div style={{ fontFamily:FC.mono, fontSize:10, color:FC.eco600, letterSpacing:'0.14em',
+                  textTransform:'uppercase', marginBottom:2 }}>Dernière prévision IA</div>
+                <div style={{ fontSize:13, fontWeight:600, color:FC.ink }}>
+                  {fc.species} · {fc.zone} · {fc.sourceLabel}
+                </div>
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:24, flexWrap:'wrap' }}>
+              <div style={{ textAlign:'center' }}>
+                <div style={{ fontFamily:FC.mono, fontSize:18, fontWeight:700,
+                  color: parseFloat(fc.nextMonthPct) >= 0 ? FC.eco600 : FC.coral }}>
+                  {parseFloat(fc.nextMonthPct) >= 0 ? '▲' : '▼'} {fc.nextMonthPct}
+                </div>
+                <div style={{ fontSize:10, color:FC.ink50, fontFamily:FC.mono }}>{fc.nextMonthLabel}</div>
+              </div>
+              <div style={{ textAlign:'center' }}>
+                <div style={{ fontFamily:FC.mono, fontSize:18, fontWeight:700, color:FC.ink }}>
+                  {fmtNum(fc.nextMonthVal)} t
+                </div>
+                <div style={{ fontSize:10, color:FC.ink50, fontFamily:FC.mono }}>Quantité prévue</div>
+              </div>
+              <div style={{ textAlign:'center' }}>
+                <div style={{ fontFamily:FC.mono, fontSize:18, fontWeight:700,
+                  color: parseFloat(fc.totalPct) >= 0 ? FC.eco600 : FC.coral }}>
+                  {parseFloat(fc.totalPct) >= 0 ? '▲' : '▼'} {fc.totalPct}
+                </div>
+                <div style={{ fontSize:10, color:FC.ink50, fontFamily:FC.mono }}>Horizon {fc.horizon} mois</div>
+              </div>
+            </div>
+            <button onClick={()=>setPage('forecast')} className="fc-btn-eco"
+              style={{ fontSize:11, padding:'7px 14px', flexShrink:0 }}>
+              Relancer →
+            </button>
+          </div>
+        )}
+
         {/* ── KPI strip ── */}
         <div className="fc-kpi-grid" style={{ gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', marginBottom:24 }}>
-          {[
-            { label:'Biomasse estimée',   value:'2 847', unit:'tonnes',    delta:'+12.4%', trend:'up'   },
-            { label:'Précision modèle',   value:'94.2',  unit:'%',         delta:'+2.1 pts',trend:'up'  },
-            { label:'Espèces surveillées',value:'38',    unit:'espèces',   delta:'+6 actives',trend:'up'},
-            { label:'Alertes actives',    value:'4',     unit:'alertes',   delta:'+1 critique',trend:'down'},
-          ].map(k=>(
+          {kpis.map(k=>(
             <div key={k.label} style={{ padding:'18px 20px' }}>
               <div className="fc-eyebrow" style={{ marginBottom:8 }}>{k.label}</div>
               <div style={{ display:'flex', alignItems:'baseline', gap:6 }}>
@@ -130,7 +195,7 @@ export default function Dashboard({ page, setPage }) {
               <div>
                 <div className="fc-eyebrow" style={{ marginBottom:4 }}>Prévision globale</div>
                 <div style={{ fontFamily:FC.serif, fontSize:17, fontWeight:700, color:FC.ink, letterSpacing:'-0.02em' }}>
-                  Biomasse totale — 90 jours
+                  {fc ? `${fc.species} — ${fc.zone}` : 'Biomasse totale — 90 jours'}
                 </div>
               </div>
               <button onClick={()=>setPage('forecast')} className="fc-btn-eco"
@@ -275,7 +340,17 @@ export default function Dashboard({ page, setPage }) {
               ))}
             </div>
           </div>
-          <WorldMap highlights={HIGHLIGHTS} mode="constellation" width={1100} height={380} showLegend={false} />
+          {fc && (
+            <div style={{ position:'absolute', bottom:12, left:0, right:0, zIndex:2,
+              display:'flex', justifyContent:'center', pointerEvents:'none' }}>
+              <div style={{ background:'rgba(4,12,31,0.75)', backdropFilter:'blur(8px)',
+                border:`1px solid ${FC.aqua}30`, borderRadius:999,
+                padding:'5px 18px', fontFamily:FC.mono, fontSize:11, color:FC.aqua }}>
+                Zone prévue : {fc.zone} · {fc.sourceLabel}
+              </div>
+            </div>
+          )}
+          <WorldMap highlights={mapHighlights} mode="constellation" width={1100} height={380} showLegend={false} />
         </div>
 
         {/* ── Quick actions ── */}
@@ -284,7 +359,7 @@ export default function Dashboard({ page, setPage }) {
             { id:'upload',    icon:'↑', title:'Importer',       desc:'Charger vos données CSV / Excel',    color:FC.navy600, bg:`${FC.navy600}12` },
             { id:'analysis',  icon:'~', title:'Analyser',       desc:'Explorer stocks et tendances',       color:FC.eco500,  bg:`${FC.eco500}10` },
             { id:'forecast',  icon:'◷', title:'Prévoir',        desc:'Prévisions IA sur 30–90 jours',      color:FC.aqua,    bg:`${FC.aqua}10`   },
-            { id:'recommend', icon:'★', title:'Recommander',    desc:'4 recommandations actives',          color:FC.amber,   bg:`${FC.amber}10`  },
+            { id:'recommend', icon:'★', title:'Recommander',    desc: fc ? '3 recommandations IA générées' : '4 recommandations actives', color:FC.amber, bg:`${FC.amber}10` },
           ].map(q=>(
             <button key={q.id} onClick={()=>setPage(q.id)} style={{
               background:'#fff', border:`1px solid ${FC.rule}`, borderRadius:10, padding:'20px',

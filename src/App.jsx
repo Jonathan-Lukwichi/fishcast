@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ForecastProvider } from './context/ForecastContext.jsx';
 import Landing    from './pages/Landing.jsx';
 import SignIn     from './pages/SignIn.jsx';
 import Dashboard  from './pages/Dashboard.jsx';
@@ -7,9 +8,8 @@ import Analysis   from './pages/Analysis.jsx';
 import Forecast   from './pages/Forecast.jsx';
 import Recommend  from './pages/Recommend.jsx';
 
-export default function App() {
+function AppRouter() {
   const [page, setPage] = useState('landing');
-
   const props = { page, setPage };
 
   switch (page) {
@@ -22,4 +22,12 @@ export default function App() {
     case 'recommend': return <Recommend  {...props} />;
     default:          return <Landing   setPage={setPage} />;
   }
+}
+
+export default function App() {
+  return (
+    <ForecastProvider>
+      <AppRouter />
+    </ForecastProvider>
+  );
 }

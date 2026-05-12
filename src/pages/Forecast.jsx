@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useBreakpoint from '../hooks/useBreakpoint.js';
+import { useForecast } from '../context/ForecastContext.jsx';
 import { FC } from '../theme.js';
 import Shell from '../components/Shell.jsx';
 import { LineChart, KPICard } from '../components/Charts.jsx';
@@ -105,6 +106,7 @@ function SelectField({ label, value, onChange, options }) {
 
 export default function Forecast({ page, setPage }) {
   const { isMobile, isSmall } = useBreakpoint();
+  const { setLastForecast } = useForecast();
   const [src, setSrc] = useState('marine');
   const [species, setSpecies] = useState(SPECIES_BY_SOURCE.marine[0]);
   const [zone, setZone] = useState(ZONES_BY_SOURCE.marine[0]);
@@ -122,7 +124,44 @@ export default function Forecast({ page, setPage }) {
   const run = () => {
     setRan(false);
     setLoading(true);
-    setTimeout(() => { setLoading(false); setRan(true); }, 1600);
+    setTimeout(() => {
+      setLoading(false);
+      setRan(true);
+      // Publish forecast results to shared context
+      const hist      = BASE_HIST[src];
+      const fcData    = buildForecast(src, horizon);
+      const baseVal   = hist[hist.length - 1][1];
+      const nextMo    = fcData[0];
+      const nextVal   = nextMo?.[1] ?? baseVal;
+      const finalVal  = fcData[fcData.length - 1]?.[1] ?? baseVal;
+      const periods   = HORIZON_PERIODS[horizon];
+      const rows = periods.map(offset => {
+        const pt = fcData[offset - 1];
+        const v  = pt?.[1] ?? baseVal;
+        const lo = Math.round(v * (1 - 0.06 - offset * 0.002));
+        const hi = Math.round(v * (1 + 0.06 + offset * 0.002));
+        const status = offset <= 3 ? 'healthy' : offset <= 12 ? 'good' : 'warning';
+        return [monthLabel(offset), v, lo, hi, status];
+      });
+      const mh = src === 'marine'
+        ? { MAR: { status: 'warning' }, MRT: { status: 'critical' }, SEN: { status: 'healthy' } }
+        : { COD: { status: 'warning' }, AGO: { status: 'healthy' }, ZMB: { status: 'healthy' }, TZA: { status: 'healthy' } };
+      setLastForecast({
+        source: src,
+        sourceLabel: SOURCES.find(s => s.id === src)?.label ?? src,
+        species, zone, horizon,
+        baseVal,
+        nextMonthVal: nextVal,
+        nextMonthLabel: monthLabel(1),
+        nextMonthDiff: nextVal - baseVal,
+        nextMonthPct: (((nextVal - baseVal) / baseVal) * 100).toFixed(1),
+        finalFc: finalVal,
+        totalPct: (((finalVal - baseVal) / baseVal) * 100).toFixed(1),
+        tableRows: rows,
+        mapHighlights: mh,
+        timestamp: new Date(),
+      });
+    }, 1600);
   };
 
   const hist      = BASE_HIST[src];
